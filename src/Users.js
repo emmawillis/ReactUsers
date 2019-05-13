@@ -1,12 +1,13 @@
 import React from 'react';
 import './Users.css';
 import User from './User';
+import { NavLink } from 'react-router-dom';
+
 
 class Users extends React.Component {
   constructor() {
     super();
     this.state = {
-      userView: false,
       page: 0, 
       per_page: 0, 
       total: 0, 
@@ -15,7 +16,6 @@ class Users extends React.Component {
     };
 
     this.getUsers = this.getUsers.bind(this);
-    this.userClick = this.userClick.bind(this);
   }
 
   componentWillMount() {
@@ -44,12 +44,6 @@ class Users extends React.Component {
       });
   }
 
-  userClick() {
-    this.setState({
-      userView: true
-    });
-  }
-
   render() {
     var bottom = this.state.page < this.state.total_pages ? 
                   <button onClick={this.getUsers}>
@@ -58,7 +52,9 @@ class Users extends React.Component {
                 : "You’ve reached the end of the list"
 
     var users = this.state.data.map((user) =>
-      <button key={user.id} onClick={this.userClick} >{ user.first_name + " " + user.last_name} </button>
+      <NavLink to="/user">
+        <li key={user.id} >{ user.first_name + " " + user.last_name} </li>
+      </NavLink>
     );
 
     if (this.state.userView) {
@@ -69,7 +65,7 @@ class Users extends React.Component {
     else {
       return (
         <div className = "Users">
-          <ul>{users}</ul>
+          {users}
           {bottom}
         </div>
       );

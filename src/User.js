@@ -1,5 +1,6 @@
 import React from 'react';
 import './Users.css';
+import { NavLink } from 'react-router-dom';
 
 class User extends React.Component {
     constructor() {
@@ -8,7 +9,6 @@ class User extends React.Component {
         };
 
         this.getUser = this.getUser.bind(this); 
-        this.backToList = this.backToList.bind(this);
     }
 
     componentWillMount() {
@@ -19,19 +19,18 @@ class User extends React.Component {
         //get user from redux and set state
     }
 
-    backToList() {
-        console.log("back")
-    }
-
     render() {
 
         return (
             <div>
                 hello
-            
-                <button onClick={this.backToList}>
-                    Back To List
-                </button> 
+
+                <NavLink to="/">
+                    <button>
+                        Back To List
+                    </button> 
+                </NavLink>
+                
             </div>
         );
     }
