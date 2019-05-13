@@ -1,7 +1,7 @@
 import React from 'react';
 import './Users.css';
 import { NavLink } from 'react-router-dom';
-
+import store from './store';
 
 class Users extends React.Component {
     constructor() {
@@ -37,15 +37,20 @@ class Users extends React.Component {
                     total_pages: data.total_pages,
                     data: newData
                 });
+                store.dispatch({ type: "dataLoad", payload: newData });
             })
             .catch(error => {
                 console.log(error);
             });
     }
 
+    handleUserClick(user) {
+        store.dispatch({ type: "userClick", payload: user});
+    }
+
     usersList = () => {
         var users = this.state.data.map((user) =>
-            <NavLink to="/user" key={user.id}>
+            <NavLink to="/user" key={user.id} onClick = {this.handleUserClick.bind(this, user)}>
                 <div >{user.first_name + " " + user.last_name} </div>
             </NavLink>
         );
@@ -69,6 +74,7 @@ class Users extends React.Component {
         return (
             <div className="Users">
                 {this.usersList()}
+                <br />
                 {this.endOfList()}
             </div>
         );
