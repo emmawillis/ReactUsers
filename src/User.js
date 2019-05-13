@@ -6,6 +6,7 @@ class User extends React.Component {
     constructor() {
         super();
         this.state = {
+
         };
 
         this.getUser = this.getUser.bind(this); 
@@ -20,7 +21,6 @@ class User extends React.Component {
     }
 
     render() {
-
         return (
             <div>
                 hello
@@ -30,7 +30,6 @@ class User extends React.Component {
                         Back To List
                     </button> 
                 </NavLink>
-                
             </div>
         );
     }
