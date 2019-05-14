@@ -73,6 +73,7 @@ class Users extends React.Component {
     render() {
         return (
             <div className="Users">
+                <h1 className="Users-header"> Users </h1>
                 {this.usersList()}
                 <br />
                 {this.endOfList()}

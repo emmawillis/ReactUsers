@@ -1,5 +1,5 @@
 import React from 'react';
-import './Users.css';
+import './User.css';
 import { NavLink } from 'react-router-dom';
 import store from './store'
 
@@ -38,7 +38,7 @@ class User extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="User">
                 {this.getUser()}
                 <br />
                 <NavLink to="/" onClick={this.backToList}>
