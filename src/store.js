@@ -1,27 +1,68 @@
 import { applyMiddleware, createStore } from "redux";
+import { put, call, takeEvery } from 'redux-saga/effects';
+import createSagaMiddleware from "redux-saga";
 
-
-const logger = (store) => (next) => (action) => {
-    console.log("action fired");
-    next(action)
+function reducer(state=initialState, action) {
+    switch (action.type) {
+        case 'USER_CLICK':
+            return { ...state, currentUser: action.payload }
+        case 'REQUESTED_LIST':
+            return { ...state, loading: true, error: false }
+        case 'REQUESTED_LIST_SUCCEEDED':
+            var newData = state.loadedUsers.concat(action.payload.data)
+            return { ...state, loadedUsers: newData, total_pages: action.payload.total_pages, page: action.payload.page, loading: false, error: false }
+        case 'REQUESTED_LIST_FAILED':
+            return { ...state, loading: false, error: true }
+        default:
+            return state;
+    }
 }
 
-const middleware = applyMiddleware(logger);
+// Actions
+const requestList = () => {
+    return { type: 'REQUESTED_LIST' }
+};
 
-function reducer(state, action) {
-    if (action.type === "userClick") {
-        state = {...state, currentUser: action.payload}
+const requestListSuccess = (data) => {
+    return { type: 'REQUESTED_LIST_SUCCEEDED', payload: data }
+};
+
+const requestListError = () => {
+    return { type: 'REQUESTED_LIST_FAILED' }
+};
+
+export const fetchList = (page) => {
+    if (!page) {
+        page = store.getState().page;
     }
-    else if (action.type === "dataLoad") {
-        state = { ...state, loadedUsers: action.payload }
-    }
-    return state;
+    return { type: 'FETCH_LIST', page: page}
+};
+
+export const userClick = (data) => {
+    return { type: 'USER_CLICK', payload: data }
+};
+
+// Sagas
+function* watchFetchList() {
+    yield takeEvery('FETCH_LIST', fetchListAsync);
 }
 
-const store = createStore(reducer, {currentUser: null, loadedUsers: []}, middleware);
+function* fetchListAsync(action) {
+    try {
+        yield put(requestList());
+        const data = yield call(() => {
+            return fetch('https://reqres.in/api/users?page=' + action.page)
+                .then(res => res.json())
+        });
+        yield put(requestListSuccess(data));
+    } catch (error) {
+        yield put(requestListError());
+    }
+}
 
-store.subscribe(() => {
-    console.log("store changed", store.getState())
-});
+//set up store
+const initialState = { loading: false, error: false, total_pages: 0, page: 1, currentUser: null, loadedUsers: [] };
+const sagaMiddleware = createSagaMiddleware();
+export const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 
-export default store;
+sagaMiddleware.run(watchFetchList);

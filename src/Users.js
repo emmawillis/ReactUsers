@@ -1,66 +1,50 @@
 import React from 'react';
 import './Users.css';
 import { NavLink } from 'react-router-dom';
-import store from './store';
+import { connect } from 'react-redux';
+import { store, fetchList, userClick } from './store';
 
 class Users extends React.Component {
     constructor() {
         super();
-        this.state = {
-            page: 0,
-            per_page: 0,
-            total: 0,
-            total_pages: 0,
-            data: []
-        };
-
-        this.getUsers = this.getUsers.bind(this);
+        this.loadMore = this.loadMore.bind(this);
     }
 
     componentWillMount() {
-        this.getUsers();
+        if (this.props.loadedUsers.length === 0) {
+            store.dispatch(fetchList())
+        }
     }
 
-    getUsers() {
-        var newPage = this.state.page + 1
-        fetch('https://reqres.in/api/users?page=' + newPage)
-            .then(response => {
-                if (response.ok) return response.json();
-                throw new Error('Request failed.');
-            })
-            .then(data => {
-                var newData = this.state.data.concat(data.data)
-                this.setState({
-                    page: data.page,
-                    per_page: data.per_page,
-                    total: data.total,
-                    total_pages: data.total_pages,
-                    data: newData
-                });
-                store.dispatch({ type: "dataLoad", payload: newData });
-            })
-            .catch(error => {
-                console.log(error);
-            });
+    loadMore() {
+        store.dispatch(fetchList(this.props.page + 1))
     }
 
     handleUserClick(user) {
-        store.dispatch({ type: "userClick", payload: user});
+        store.dispatch(userClick(user))
     }
 
     usersList = () => {
-        var users = this.state.data.map((user) =>
-            <NavLink to="/user" key={user.id} onClick = {this.handleUserClick.bind(this, user)}>
-                <div >{user.first_name + " " + user.last_name} </div>
-            </NavLink>
-        );
-        return users;
+        if (this.props.error) {
+            return "Error loading users."
+        }
+        else {
+            var users = this.props.loadedUsers.map((user) =>
+                <NavLink to="/user" key={user.id} onClick = {this.handleUserClick.bind(this, user)}>
+                    <div >{user.first_name + " " + user.last_name} </div>
+                </NavLink>
+            );
+            return users;
+        }
     }
 
     endOfList = () => {
-        if (this.state.page < this.state.total_pages) {
+        if (this.props.loading) {
+            return "Loading..."
+        }
+        else if (this.props.page < this.props.total_pages) {
             return (
-                <button onClick={this.getUsers}>
+                <button onClick={this.loadMore}>
                     Load More
                 </button>
             );
@@ -82,5 +66,6 @@ class Users extends React.Component {
     }
 }
 
-export default Users;
-
+export default connect((state) => {
+    return state;
+})(Users); //connect store state to users props

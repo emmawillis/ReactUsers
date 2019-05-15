@@ -1,7 +1,8 @@
 import React from 'react';
 import './User.css';
 import { NavLink } from 'react-router-dom';
-import store from './store'
+import { connect } from 'react-redux';
+import { userClick, store } from './store';
 
 class User extends React.Component {
     constructor() {
@@ -14,7 +15,7 @@ class User extends React.Component {
     }
 
     getUser() {
-        var user = store.getState().currentUser;
+        var user = this.props.currentUser;
         if (user) {
             return (
                 <div>
@@ -33,7 +34,7 @@ class User extends React.Component {
     } 
 
     backToList() {
-        store.dispatch({ type: "userClick", payload: null });
+        store.dispatch(userClick(null));
     }
 
     render() {
@@ -51,5 +52,7 @@ class User extends React.Component {
     }
 }
 
-export default User;
+export default connect((state) => {
+    return state;
+})(User); //connect store state to user props
 
