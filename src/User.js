@@ -2,12 +2,13 @@ import React from 'react';
 import './User.css';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userClick, store } from './store';
+import { userClick } from './store';
 
 class User extends React.Component {
     constructor() {
         super();
         this.getUser = this.getUser.bind(this); 
+        this.backToList = this.backToList.bind(this);
     }
 
     componentWillMount() {
@@ -34,7 +35,7 @@ class User extends React.Component {
     } 
 
     backToList() {
-        store.dispatch(userClick(null));
+        this.props.dispatch(userClick(null));
     }
 
     render() {

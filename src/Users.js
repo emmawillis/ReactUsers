@@ -10,17 +10,17 @@ class Users extends React.Component {
         this.loadMore = this.loadMore.bind(this);
     }
 
-    componentWillMount() {
+    componentWillMount() { //first time loading users
         if (this.props.loadedUsers.length === 0) {
             this.props.dispatch(fetchList())
         }
     }
 
-    loadMore() {
+    loadMore() { //get next page
         this.props.dispatch(fetchList(this.props.page + 1))
     }
 
-    handleUserClick(user) {
+    handleUserClick(user) { //pass user information to store to be loaded in user page
         this.props.dispatch(userClick(user))
     }
 
