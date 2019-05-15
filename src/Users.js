@@ -2,7 +2,7 @@ import React from 'react';
 import './Users.css';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { store, fetchList, userClick } from './store';
+import { fetchList, userClick } from './store';
 
 class Users extends React.Component {
     constructor() {
@@ -12,16 +12,16 @@ class Users extends React.Component {
 
     componentWillMount() {
         if (this.props.loadedUsers.length === 0) {
-            store.dispatch(fetchList())
+            this.props.dispatch(fetchList())
         }
     }
 
     loadMore() {
-        store.dispatch(fetchList(this.props.page + 1))
+        this.props.dispatch(fetchList(this.props.page + 1))
     }
 
     handleUserClick(user) {
-        store.dispatch(userClick(user))
+        this.props.dispatch(userClick(user))
     }
 
     usersList = () => {
